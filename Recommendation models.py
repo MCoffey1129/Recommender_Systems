@@ -1,7 +1,7 @@
 """Recommendation models"""
 
 """The code below looks at three different approaches for recommending movies from a 
-   subset of the "movielens" dataset (please note this analysis needs to be reviewed):
+   subset of the "movielens" dataset (please note this analysis needs to be reviewed):-
 
    1. Apriori model (usually used for market based analysis):
       Uses support, confidence and lift (three terms which are
