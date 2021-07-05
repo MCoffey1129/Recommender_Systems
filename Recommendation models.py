@@ -1,12 +1,29 @@
-"""Recommendation model"""
+"""Recommendation models"""
 
-# Apriori - Association rule learning: people who buy something also buy something else
-# This dataset is a basket items, you want to see what products are the most associated.
-# If they buy one product what other product will they buy?
-# We are interested in Support = how many ppl bought this product / total no of transactions
-# I think the support number may not be 100% correct in the tables below
-# Confidence = how many bought this product given they bought a different product
-# Lift = Confidence / Support (strength of each rule)
+"""The code below looks at three different approaches for recommending movies from a 
+   subset of the movielens dataset (please note this analysis needs to be reviewed):
+
+   1. Apriori model (usually used for market based analysis):
+      Uses support, confidence and lift (three terms which are
+      outlined below) to determine how two products are associated with each other
+   
+   2. Collaborative filtering:
+      Collaborative filtering leverages the power of the crowd. The intuition behind
+      collaborative filtering is that if a user A likes products X and Y, and if
+      another user B likes product X, there is a high chance that he will
+      like the product Y as well.  
+
+   3. Content based filtering:
+      In content-based filtering, the similarity between different products is
+      calculated e.g. if user 1 rates a movie of
+      a specific genre really highly we would recommend a movie of the same genre
+      which received a very high overall average rating
+      """
+
+
+############################################################################################################
+                                # 1. Initial data analysis
+############################################################################################################
 
 """Importing the libraries"""
 import numpy as np
@@ -14,11 +31,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from apyori import apriori
-from sklearn.metrics.pairwise import cosine_similarity
 
-"""Import the required datasets"""
+"""Import the required datasets
+   update the below code to wherever you have saved the datasets"""
 
-# Data Preprocessing
 movie_lookup = pd.read_csv(r'files\movies.csv')
 ratings = pd.read_csv(r'files\ratings_reduced.csv')
 print(movie_lookup)
@@ -65,11 +81,20 @@ _= plt.yticks([0, 0.05, 0.10, 0.15, 0.20, 0.25], ["0%", "5%", "10%", "15%", "20%
 plt.plot()
 
 
-"""investigate user 123100"""
-
 """Group the movies watched by each user"""
 movie_rec_data.columns
 movie_rec_data.shape[0]
+
+
+
+# Apriori - Association rule learning: people who buy something also buy something else
+# This dataset is a basket items, you want to see what products are the most associated.
+# If they buy one product what other product will they buy?
+# We are interested in Support = how many ppl bought this product / total no of transactions
+# I think the support number may not be 100% correct in the tables below
+# Confidence = how many bought this product given they bought a different product
+# Lift = Confidence / Support (strength of each rule)
+
 
 
 movies_watched = []
@@ -181,7 +206,7 @@ corr_jp.head(30) # Movies such as speed, independence day, terminator would be r
 # and had would be the second highest based off of ratings correlation
 
 
-# Dumb model - used as a rough check
+# A really simple view of Content-based filtering
 movie_rec_data.loc[movie_rec_data['title'] == 'Jurassic Park (1993)']  # Action|Adventure|Sci-Fi|Thriller
 
 genre_match = movie_rec_data.loc[movie_rec_data['genres'] == 'Action|Adventure|Sci-Fi|Thriller']
