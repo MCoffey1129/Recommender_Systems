@@ -145,11 +145,11 @@ resultsinDataFrame.nlargest(n = 50, columns = 'Lift')
 resultsinDataFrame.to_csv(r'Files\resultsinDataFrame.csv', index=False, header=True)
 
 # Example:
-# You have just watched "Baby Driver (2017)" assuming the only information that Netflix have to suggest other
+# You have just watched "Jurassic Park (1993)" assuming the only information that Netflix have to suggest other
 # movie titles to you are based on the information we have above what are they most likely to recommend to you?
-# Ghost in the Shell (2017), Logan (2017), Sicario (2015) and John Wick (2014)
+# Last Action Hero (1993), Speed (1994), Lost World: Jurassic Park, The (1997) and Maverick (1994)
 
-print(resultsinDataFrame[resultsinDataFrame['movie_watched'] == 'Baby Driver (2017)'].nlargest(n=10,columns='Lift'))
+print(resultsinDataFrame[resultsinDataFrame['movie_watched'] == 'Jurassic Park (1993)'].nlargest(n=10,columns='Lift'))
 
 
 ##################################################################################################################
@@ -160,11 +160,30 @@ print(resultsinDataFrame[resultsinDataFrame['movie_watched'] == 'Baby Driver (20
 # Most are blank because most people have not rated the movie
 movie_matrix = movie_rec_data.pivot_table(index='userId', columns='title', values='rating')
 movie_matrix.head()
+column_means = movie_matrix.mean()
+movie_matrix.fillna(column_means,inplace=True)
 
-baby_driver_user_rating = movie_matrix['Baby Driver (2017)']
-baby_driver_user_rating.dropna('',how=any)tbl.dropna(subset=lst, how='any')
+
+jp_user_rating = movie_matrix['Jurassic Park (1993)']
+jp_user_rating.dropna(inplace=True)
 
 # Finding the correlation with different movies
+similar_to_jp = movie_matrix.corrwith(jp_user_rating)
+similar_to_jp.head()
 
-similar_to_baby_driver = movie_matrix.corrwith(baby_driver_user_rating)
-similar_to_baby_driver.head()
+corr_jp = pd.DataFrame(similar_to_jp, columns=['correlation'])
+corr_jp.dropna(inplace=True)
+corr_jp = corr_jp.sort_values(by='correlation', ascending=False)
+
+corr_jp.head(30) # Movies such as speed, independence day, terminator would be recommended based on ratings
+
+# Please note "Speed (1994)" would be the second highest rated movie based on the Apriori model
+# and had would be the second highest based off of ratings correlation
+
+
+# Dumb model - used as a rough check
+movie_rec_data.loc[movie_rec_data['title'] == 'Jurassic Park (1993)']  # Action|Adventure|Sci-Fi|Thriller
+
+genre_match = movie_rec_data.loc[movie_rec_data['genres'] == 'Action|Adventure|Sci-Fi|Thriller']
+genre_avg = genre_match[['title','rating']].groupby('title').mean()
+genre_avg.sort_values(by='rating', ascending=False)
