@@ -177,7 +177,7 @@ movies_apriori.to_csv(r'Files\movies_apriori.csv', index=False, header=True)
 # movie titles to you are based on the information we have above what are they most likely to recommend to you?
 # Ans = Last Action Hero (1993), Speed (1994), Lost World: Jurassic Park, The (1997) and Maverick (1994)
 
-print(movies_apriori[resultsinDataFrame['movie_watched'] == 'Jurassic Park (1993)'].nlargest(n=10,columns='Lift'))
+print(movies_apriori[movies_apriori['movie_watched'] == 'Jurassic Park (1993)'].nlargest(n=10,columns='Lift'))
 
 
 ##################################################################################################################
@@ -189,12 +189,11 @@ Most are blank because most people have not rated the movie"""
 movie_matrix = movie_rec_data.pivot_table(index='userId', columns='title', values='rating')
 movie_matrix.head()
 
-"""Unfortunately because we have used such a small dataset most of the data is Null.
- For now we will take the average of each of the columns.
- However this is not best practice and we do that here purely for the purposes
+"""Unfortunately because we have used such a small subsection of the total dataset
+ For now we will let the value of missing recommendations equal to 0.
+ I do not think this is the best approach but will continue for the purposes 
  of completing this exercise!!!!!!"""
-column_means = movie_matrix.mean()
-movie_matrix.fillna(column_means,inplace=True)
+movie_matrix.fillna(0,inplace=True)
 
 
 """Extract the Jurassic Park info"""
@@ -212,10 +211,10 @@ corr_jp.dropna(inplace=True)
 corr_jp = corr_jp.sort_values(by='correlation', ascending=False)
 
 corr_jp.head(30)
-# Movies such as Speed, Independence day, Terminator would be recommended based on ratings
+# Movies such as Speed, and Terminator 2 would be recommended based on the collaborative model
 
 # Please note "Speed (1994)" would be the second highest rated movie based on the Apriori model
-# and would be the second highest based off of ratings correlation
+# and would be the  highest based off of the Collaborative model
 
 ##################################################################################################################
                 # 4. Content-based filtering - An extremely simple example
